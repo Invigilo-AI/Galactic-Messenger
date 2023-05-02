@@ -1,4 +1,4 @@
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, Union
 from enum import Enum
 import json
 import aiohttp
@@ -24,8 +24,20 @@ class MessagePayload(TypedDict):
     message: str
 
 
+class ImagePayload(TypedDict):
+    message: str
+    image_bytes: str
+
+
+class VideoPayload(TypedDict):
+    message: str
+    video_bytes: str
+
+
 class Alert:
     def __init__(self, service: ServiceInput, token: str, chatId: str) -> None:
+        self.client: Union[WhatsappAlert, TelegramAlert, EmailAlert]
+
         if service == Service.WHATSAPP:
             self.client = WhatsappAlert(token, chatId)
         elif service == Service.TELEGRAM:
@@ -35,18 +47,35 @@ class Alert:
         else:
             raise Exception("Input Service is Invalid!")
 
-    def send_one_message(self, message: str):
-        return self.client.send_one_message(message)
+    def send_one_message(self, payload: MessagePayload):
+        if isinstance(self.client, WhatsappAlert):
+            return self.client.send_one_message(payload["message"])
 
-    def send_one_image(self, message: str, image_bytes: bytes):
-        return self.client.send_one_image(message, image_bytes)
+    def send_one_image(self, payload: ImagePayload):
+        if isinstance(self.client, WhatsappAlert):
+            return self.client.send_one_image(
+                payload["message"], payload["message"]
+            )
 
-    def send_one_video(self, message: str, video_bytes: bytes):
-        return self.client.send_one_video(message, video_bytes)
+    # def send_one_video(self, message: VideoPayload):
+    #     return self.client.send_one_video(message, video_bytes)
 
 
-class WhatsappMessagePayload(MessagePayload):
+class WhatsappMessagePayload(TypedDict):
     groupId: str
+    message: str
+
+
+class WhatsappImagePayload(MessagePayload):
+    groupId: str
+    message: str
+    imageBase64: str
+
+
+class WhatsappVideoPayload(MessagePayload):
+    groupId: str
+    message: str
+    videobase64: str
 
 
 class WhatsappAlert:
@@ -70,7 +99,7 @@ class WhatsappAlert:
         await client.close()
         return response_json
 
-    def send_one_image(self, message: str, image_bytes: bytes):
+    def send_one_image(self, message: str, image_base64: str):
         return
 
     def send_one_video(self, message: str, video_bytes: bytes):
@@ -84,8 +113,8 @@ class TelegramAlert:
     def send_one_message(self, message: str):
         return
 
-    def send_one_image(self, message: str, image_bytes: bytes):
-        return
+    # def send_one_image(self, message: str, image_bytes: bytes):
+    #     return
 
     def send_one_video(self, message: str, video_bytes: bytes):
         return
@@ -98,8 +127,8 @@ class EmailAlert:
     def send_one_message(self, message: str):
         return
 
-    def send_one_image(self, message: str, image_bytes: bytes):
-        return
+    # def send_one_image(self, message: str, image_bytes: bytes):
+    #     return
 
     def send_one_video(self, message: str, video_bytes: bytes):
         return
