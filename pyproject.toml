@@ -10,10 +10,10 @@ line-length = 79
 target-version = ['py39']
 
 [tool.flake8]
-ignore = W503
+ignore = "W503"
 max-line-length = 79
 max-complexity = 18
-exclude = .git,__pycache__,venv
+exclude = ".git,__pycache__,venv"
 
 [tool.pyright]
 include = ["src/**/*"]
