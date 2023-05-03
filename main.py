@@ -48,20 +48,25 @@ class Alert:
         else:
             raise Exception("Input Service is Invalid!")
 
-    def send_one_message(self, payload: MessagePayload):
-        if isinstance(self.client, WhatsappAlert):
-            return self.client.send_one_message(payload["message"])
+    def __bytes_2_base64_str(self, b: bytes):
+        return base64.b64encode(b).decode("utf-8")
 
-    def send_one_image(self, payload: ImagePayload):
+    async def send_one_message(self, payload: MessagePayload):
         if isinstance(self.client, WhatsappAlert):
-            return self.client.send_one_image(
-                payload["message"], payload["message"]
+            return await self.client.send_one_message(payload["message"])
+
+    async def send_one_image(self, payload: ImagePayload):
+        if isinstance(self.client, WhatsappAlert):
+            return await self.client.send_one_image(
+                payload["message"],
+                self.__bytes_2_base64_str(payload["image_bytes"]),
             )
 
-    def send_one_video(self, payload: VideoPayload):
+    async def send_one_video(self, payload: VideoPayload):
         if isinstance(self.client, WhatsappAlert):
-            return self.client.send_one_video(
-                payload["message"], payload["message"]
+            return await self.client.send_one_video(
+                payload["message"],
+                self.__bytes_2_base64_str(payload["video_bytes"]),
             )
 
 
@@ -79,7 +84,7 @@ class WhatsappImagePayload(MessagePayload):
 class WhatsappVideoPayload(MessagePayload):
     groupId: str
     message: str
-    videobase64: str
+    videoBase64: str
 
 
 class WhatsappAlert:
@@ -103,11 +108,39 @@ class WhatsappAlert:
         await client.close()
         return response_json
 
-    def send_one_image(self, message: str, image_base64: str):
-        return
+    async def send_one_image(self, message: str, image_base64: str):
+        payload: WhatsappImagePayload = {
+            "groupId": self.groupId,
+            "message": message,
+            "imageBase64": image_base64,
+        }
+        timeout_options = aiohttp.ClientTimeout(
+            total=Config.SINGLE_TOTAL_TIMEOUT.value
+        )
+        client = aiohttp.ClientSession(timeout=timeout_options)
+        response = await client.post(
+            self.url + "/message", json=json.dumps(payload)
+        )
+        response_json = await response.json()
+        await client.close()
+        return response_json
 
-    def send_one_video(self, message: str, video_base64: str):
-        return
+    async def send_one_video(self, message: str, video_base64: str):
+        payload: WhatsappVideoPayload = {
+            "groupId": self.groupId,
+            "message": message,
+            "videoBase64": video_base64,
+        }
+        timeout_options = aiohttp.ClientTimeout(
+            total=Config.SINGLE_TOTAL_TIMEOUT.value
+        )
+        client = aiohttp.ClientSession(timeout=timeout_options)
+        response = await client.post(
+            self.url + "/message", json=json.dumps(payload)
+        )
+        response_json = await response.json()
+        await client.close()
+        return response_json
 
 
 class TelegramAlert:
@@ -117,8 +150,8 @@ class TelegramAlert:
     def send_one_message(self, message: str):
         return
 
-    # def send_one_image(self, message: str, image_bytes: bytes):
-    #     return
+    def send_one_image(self, message: str, image_bytes: bytes):
+        return
 
     def send_one_video(self, message: str, video_bytes: bytes):
         return
@@ -131,8 +164,8 @@ class EmailAlert:
     def send_one_message(self, message: str):
         return
 
-    # def send_one_image(self, message: str, image_bytes: bytes):
-    #     return
+    def send_one_image(self, message: str, image_bytes: bytes):
+        return
 
     def send_one_video(self, message: str, video_bytes: bytes):
         return
