@@ -142,6 +142,27 @@ class WhatsappAlert:
         await client.close()
         return response_json
 
+    async def send_many_messages(self, messages: list[str]):
+        timeout_options = aiohttp.ClientTimeout(
+            total=Config.BATCH_TOTAL_TIMEOUT.value
+        )
+        client = aiohttp.ClientSession(timeout=timeout_options)
+
+        responses_json = []
+        for message in messages:
+            payload: WhatsappMessagePayload = {
+                "groupId": self.groupId,
+                "message": message,
+            }
+            response = await client.post(
+                self.url + "/message", json=json.dumps(payload)
+            )
+            response_json = await response.json()
+            response_json.append(response_json)
+
+        await client.close()
+        return responses_json
+
 
 class TelegramAlert:
     def __init__(self, token, secret):
