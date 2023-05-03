@@ -115,7 +115,8 @@ class WhatsappAlert:
             "imageBase64": image_base64,
         }
         timeout_options = aiohttp.ClientTimeout(
-            total=Config.SINGLE_TOTAL_TIMEOUT.value
+            total=Config.SINGLE_TOTAL_TIMEOUT.value,
+            connect=Config.SINGLE_CONNECT_TIMEOUT.value,
         )
         client = aiohttp.ClientSession(timeout=timeout_options)
         response = await client.post(
@@ -132,7 +133,8 @@ class WhatsappAlert:
             "videoBase64": video_base64,
         }
         timeout_options = aiohttp.ClientTimeout(
-            total=Config.SINGLE_TOTAL_TIMEOUT.value
+            total=Config.SINGLE_TOTAL_TIMEOUT.value,
+            connect=Config.SINGLE_CONNECT_TIMEOUT.value,
         )
         client = aiohttp.ClientSession(timeout=timeout_options)
         response = await client.post(
@@ -144,7 +146,8 @@ class WhatsappAlert:
 
     async def send_many_messages(self, messages: list[str]):
         timeout_options = aiohttp.ClientTimeout(
-            total=Config.BATCH_TOTAL_TIMEOUT.value
+            total=Config.BATCH_TOTAL_TIMEOUT.value,
+            connect=Config.BATCH_CONNECT_TIMEOUT.value,
         )
         client = aiohttp.ClientSession(timeout=timeout_options)
 
