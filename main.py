@@ -119,7 +119,7 @@ class WhatsappAlert:
         )
         client = aiohttp.ClientSession(timeout=timeout_options)
         response = await client.post(
-            self.url + "/message", json=json.dumps(payload)
+            self.url + "/image", json=json.dumps(payload)
         )
         response_json = await response.json()
         await client.close()
@@ -136,7 +136,7 @@ class WhatsappAlert:
         )
         client = aiohttp.ClientSession(timeout=timeout_options)
         response = await client.post(
-            self.url + "/message", json=json.dumps(payload)
+            self.url + "/video", json=json.dumps(payload)
         )
         response_json = await response.json()
         await client.close()
