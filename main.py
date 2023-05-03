@@ -166,6 +166,56 @@ class WhatsappAlert:
         await client.close()
         return responses_json
 
+    async def send_many_images(
+        self, messages: list[str], images_base64: list[str]
+    ):
+        timeout_options = aiohttp.ClientTimeout(
+            total=Config.BATCH_TOTAL_TIMEOUT.value,
+            connect=Config.BATCH_CONNECT_TIMEOUT.value,
+        )
+        client = aiohttp.ClientSession(timeout=timeout_options)
+
+        responses_json = []
+        for message, image_base64 in zip(messages, images_base64):
+            payload: WhatsappImagePayload = {
+                "groupId": self.groupId,
+                "message": message,
+                "imageBase64": image_base64,
+            }
+            response = await client.post(
+                self.url + "/message", json=json.dumps(payload)
+            )
+            response_json = await response.json()
+            response_json.append(response_json)
+
+        await client.close()
+        return responses_json
+
+    async def send_many_videos(
+        self, messages: list[str], videos_base64: list[str]
+    ):
+        timeout_options = aiohttp.ClientTimeout(
+            total=Config.BATCH_TOTAL_TIMEOUT.value,
+            connect=Config.BATCH_CONNECT_TIMEOUT.value,
+        )
+        client = aiohttp.ClientSession(timeout=timeout_options)
+
+        responses_json = []
+        for message, video_base64 in zip(messages, videos_base64):
+            payload: WhatsappVideoPayload = {
+                "groupId": self.groupId,
+                "message": message,
+                "videoBase64": video_base64,
+            }
+            response = await client.post(
+                self.url + "/message", json=json.dumps(payload)
+            )
+            response_json = await response.json()
+            response_json.append(response_json)
+
+        await client.close()
+        return responses_json
+
 
 class TelegramAlert:
     def __init__(self, token, secret):
