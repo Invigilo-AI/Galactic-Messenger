@@ -1,7 +1,8 @@
 from typing import TypedDict, Literal, Union
 from enum import Enum
-import json
 import aiohttp
+import base64
+import json
 
 
 class Config(Enum):
@@ -26,12 +27,12 @@ class MessagePayload(TypedDict):
 
 class ImagePayload(TypedDict):
     message: str
-    image_bytes: str
+    image_bytes: bytes
 
 
 class VideoPayload(TypedDict):
     message: str
-    video_bytes: str
+    video_bytes: bytes
 
 
 class Alert:
@@ -57,8 +58,11 @@ class Alert:
                 payload["message"], payload["message"]
             )
 
-    # def send_one_video(self, message: VideoPayload):
-    #     return self.client.send_one_video(message, video_bytes)
+    def send_one_video(self, payload: VideoPayload):
+        if isinstance(self.client, WhatsappAlert):
+            return self.client.send_one_video(
+                payload["message"], payload["message"]
+            )
 
 
 class WhatsappMessagePayload(TypedDict):
@@ -102,7 +106,7 @@ class WhatsappAlert:
     def send_one_image(self, message: str, image_base64: str):
         return
 
-    def send_one_video(self, message: str, video_bytes: bytes):
+    def send_one_video(self, message: str, video_base64: str):
         return
 
 
