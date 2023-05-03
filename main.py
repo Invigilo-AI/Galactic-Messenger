@@ -93,14 +93,14 @@ class WhatsappAlert:
         self.groupId = groupId
 
     async def send_one_message(self, message: str):
-        payload: WhatsappMessagePayload = {
-            "groupId": self.groupId,
-            "message": message,
-        }
         timeout_options = aiohttp.ClientTimeout(
             total=Config.SINGLE_TOTAL_TIMEOUT.value
         )
         client = aiohttp.ClientSession(timeout=timeout_options)
+        payload: WhatsappMessagePayload = {
+            "groupId": self.groupId,
+            "message": message,
+        }
         response = await client.post(
             self.url + "/message", json=json.dumps(payload)
         )
@@ -109,16 +109,16 @@ class WhatsappAlert:
         return response_json
 
     async def send_one_image(self, message: str, image_base64: str):
-        payload: WhatsappImagePayload = {
-            "groupId": self.groupId,
-            "message": message,
-            "imageBase64": image_base64,
-        }
         timeout_options = aiohttp.ClientTimeout(
             total=Config.SINGLE_TOTAL_TIMEOUT.value,
             connect=Config.SINGLE_CONNECT_TIMEOUT.value,
         )
         client = aiohttp.ClientSession(timeout=timeout_options)
+        payload: WhatsappImagePayload = {
+            "groupId": self.groupId,
+            "message": message,
+            "imageBase64": image_base64,
+        }
         response = await client.post(
             self.url + "/image", json=json.dumps(payload)
         )
@@ -127,16 +127,16 @@ class WhatsappAlert:
         return response_json
 
     async def send_one_video(self, message: str, video_base64: str):
-        payload: WhatsappVideoPayload = {
-            "groupId": self.groupId,
-            "message": message,
-            "videoBase64": video_base64,
-        }
         timeout_options = aiohttp.ClientTimeout(
             total=Config.SINGLE_TOTAL_TIMEOUT.value,
             connect=Config.SINGLE_CONNECT_TIMEOUT.value,
         )
         client = aiohttp.ClientSession(timeout=timeout_options)
+        payload: WhatsappVideoPayload = {
+            "groupId": self.groupId,
+            "message": message,
+            "videoBase64": video_base64,
+        }
         response = await client.post(
             self.url + "/video", json=json.dumps(payload)
         )
