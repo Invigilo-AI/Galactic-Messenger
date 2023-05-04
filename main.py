@@ -1,4 +1,5 @@
 from typing import TypedDict, Literal, Union
+from functools import partial
 from enum import Enum
 import aiohttp
 import base64
@@ -183,7 +184,7 @@ class WhatsappAlert:
                 "imageBase64": image_base64,
             }
             response = await client.post(
-                self.url + "/message", json=json.dumps(payload)
+                self.url + "/image", json=json.dumps(payload)
             )
             response_json = await response.json()
             response_json.append(response_json)
@@ -200,18 +201,21 @@ class WhatsappAlert:
         )
         client = aiohttp.ClientSession(timeout=timeout_options)
 
-        responses_json = []
-        for message, video_base64 in zip(messages, videos_base64):
+        async def send(
+            message: str,
+            video_base64: str,
+        ):
             payload: WhatsappVideoPayload = {
                 "groupId": self.groupId,
                 "message": message,
                 "videoBase64": video_base64,
             }
             response = await client.post(
-                self.url + "/message", json=json.dumps(payload)
+                self.url + "/video", json=json.dumps(payload)
             )
-            response_json = await response.json()
-            response_json.append(response_json)
+            return await response.json()
+
+        responses_json = map(send, messages, videos_base64)
 
         await client.close()
         return responses_json
@@ -243,3 +247,12 @@ class EmailAlert:
 
     def send_one_video(self, message: str, video_bytes: bytes):
         return
+
+
+if __name__ == "__main__":
+
+    async def main():
+        wa_alert = Alert("WHATSAPP", "", "")
+        await wa_alert.send_one_image({"message": "hi", "image_bytes": b""})
+
+    result = main()
