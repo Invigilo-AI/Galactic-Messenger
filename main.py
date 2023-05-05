@@ -3,7 +3,6 @@ from functools import partial
 from enum import Enum
 import aiohttp
 import base64
-import json
 
 
 class Config(Enum):
@@ -106,7 +105,7 @@ class WhatsappAlert:
         payload: AllowedWhatsappPayload,
     ):
         response = await session.post(
-            f"{self.url}/{payload_type.lower()}", json=json.dumps(payload)
+            f"{self.url}/{payload_type.lower()}", json=payload
         )
         return await response.json()
 
@@ -221,146 +220,145 @@ class WhatsappAlert:
             ],
         )
 
-    # async def send_one_message(self, message: str):
-    #     timeout_options = aiohttp.ClientTimeout(
-    #         total=Config.SINGLE_TOTAL_TIMEOUT.value
-    #     )
-    #     client = aiohttp.ClientSession(timeout=timeout_options)
-    #     payload: WhatsappMessagePayload = {
-    #         "groupId": self.groupId,
-    #         "message": message,
-    #     }
-    #     response = await client.post(
-    #         self.url + "/message", json=json.dumps(payload)
-    #     )
-    #     response_json = await response.json()
-    #     await client.close()
-    #     return response_json
 
-    # async def send_one_image(self, message: str, image_base64: str):
-    #     timeout_options = aiohttp.ClientTimeout(
-    #         total=Config.SINGLE_TOTAL_TIMEOUT.value,
-    #         connect=Config.SINGLE_CONNECT_TIMEOUT.value,
-    #     )
-    #     client = aiohttp.ClientSession(timeout=timeout_options)
-    #     payload: WhatsappImagePayload = {
-    #         "groupId": self.groupId,
-    #         "message": message,
-    #         "imageBase64": image_base64,
-    #     }
-    #     response = await client.post(
-    #         self.url + "/image", json=json.dumps(payload)
-    #     )
-    #     response_json = await response.json()
-    #     await client.close()
-    #     return response_json
+class TelegramMessagePayload(TypedDict):
+    chat_id: str
+    text: str
 
-    # async def send_one_video(self, message: str, video_base64: str):
-    #     timeout_options = aiohttp.ClientTimeout(
-    #         total=Config.SINGLE_TOTAL_TIMEOUT.value,
-    #         connect=Config.SINGLE_CONNECT_TIMEOUT.value,
-    #     )
-    #     client = aiohttp.ClientSession(timeout=timeout_options)
-    #     payload: WhatsappVideoPayload = {
-    #         "groupId": self.groupId,
-    #         "message": message,
-    #         "videoBase64": video_base64,
-    #     }
-    #     response = await client.post(
-    #         self.url + "/video", json=json.dumps(payload)
-    #     )
-    #     response_json = await response.json()
-    #     await client.close()
-    #     return response_json
 
-    # async def send_many_messages(self, messages: list[str]):
-    #     timeout_options = aiohttp.ClientTimeout(
-    #         total=Config.BATCH_TOTAL_TIMEOUT.value,
-    #         connect=Config.BATCH_CONNECT_TIMEOUT.value,
-    #     )
-    #     client = aiohttp.ClientSession(timeout=timeout_options)
-    #
-    #     responses_json = []
-    #     for message in messages:
-    #         payload: WhatsappMessagePayload = {
-    #             "groupId": self.groupId,
-    #             "message": message,
-    #         }
-    #         response = await client.post(
-    #             self.url + "/message", json=json.dumps(payload)
-    #         )
-    #         response_json = await response.json()
-    #         response_json.append(response_json)
-    #
-    #     await client.close()
-    #     return responses_json
-    #
-    # async def send_many_images(
-    #     self, messages: list[str], images_base64: list[str]
-    # ):
-    #     timeout_options = aiohttp.ClientTimeout(
-    #         total=Config.BATCH_TOTAL_TIMEOUT.value,
-    #         connect=Config.BATCH_CONNECT_TIMEOUT.value,
-    #     )
-    #     client = aiohttp.ClientSession(timeout=timeout_options)
-    #
-    #     responses_json = []
-    #     for message, image_base64 in zip(messages, images_base64):
-    #         payload: WhatsappImagePayload = {
-    #             "groupId": self.groupId,
-    #             "message": message,
-    #             "imageBase64": image_base64,
-    #         }
-    #         response = await client.post(
-    #             self.url + "/image", json=json.dumps(payload)
-    #         )
-    #         response_json = await response.json()
-    #         response_json.append(response_json)
-    #
-    #     await client.close()
-    #     return responses_json
-    #
-    # async def send_many_videos(
-    #     self, messages: list[str], videos_base64: list[str]
-    # ):
-    #     timeout_options = aiohttp.ClientTimeout(
-    #         total=Config.BATCH_TOTAL_TIMEOUT.value,
-    #         connect=Config.BATCH_CONNECT_TIMEOUT.value,
-    #     )
-    #     client = aiohttp.ClientSession(timeout=timeout_options)
-    #
-    #     async def send(
-    #         message: str,
-    #         video_base64: str,
-    #     ):
-    #         payload: WhatsappVideoPayload = {
-    #             "groupId": self.groupId,
-    #             "message": message,
-    #             "videoBase64": video_base64,
-    #         }
-    #         response = await client.post(
-    #             self.url + "/video", json=json.dumps(payload)
-    #         )
-    #         return await response.json()
-    #
-    #     responses_json = map(send, messages, videos_base64)
-    #
-    #     await client.close()
-    #     return responses_json
+class TelegramImagePayload(TypedDict):
+    chat_id: str
+    photo: bytes
+    caption: str
+
+
+class TelegramVideoPayload(TypedDict):
+    chat_id: str
+    video: bytes
+    caption: str
+
+
+AllowedTelegramPayload = Union[
+    TelegramMessagePayload, TelegramImagePayload, TelegramVideoPayload
+]
 
 
 class TelegramAlert:
-    def __init__(self, token):
-        return
+    def __init__(self, token: str):
+        self.url = f"https://api.telegram.org/bot{token}"
 
-    def send_one_message(self, message: str):
-        return
+    async def __send(
+        self,
+        session: aiohttp.ClientSession,
+        payload_type: Literal["sendMessage", "sendPhoto", "sendVideo"],
+        payload: AllowedTelegramPayload,
+    ):
+        response = await session.post(
+            f"{self.url}/{payload_type}",
+            data=aiohttp.FormData().add_fields(payload),
+        )
+        return await response.json()
 
-    def send_one_image(self, message: str, image_bytes: bytes):
-        return
+    async def __send_one(
+        self,
+        payload_type: Literal["sendMessage", "sendPhoto", "sendVideo"],
+        payload: AllowedTelegramPayload,
+    ):
+        timeout_options = aiohttp.ClientTimeout(
+            total=Config.SINGLE_TOTAL_TIMEOUT.value,
+            connect=Config.SINGLE_CONNECT_TIMEOUT.value,
+        )
+        session = aiohttp.ClientSession(timeout=timeout_options)
+        response_json = await self.__send(session, payload_type, payload)
+        await session.close()
+        return response_json
 
-    def send_one_video(self, message: str, video_bytes: bytes):
-        return
+    async def __send_many(
+        self,
+        payload_type: Literal["sendMessage", "sendPhoto", "sendVideo"],
+        payloads: list[AllowedTelegramPayload],
+    ):
+        timeout_options = aiohttp.ClientTimeout(
+            total=Config.BATCH_TOTAL_TIMEOUT.value,
+            connect=Config.BATCH_CONNECT_TIMEOUT.value,
+        )
+        session = aiohttp.ClientSession(timeout=timeout_options)
+        response_json = map(
+            partial(self.__send, session=session, payload_type=payload_type),
+            payloads,
+        )
+        await session.close()
+        return response_json
+
+    async def send_one_message(self, chat_id: str, text: str):
+        return await self.__send_one(
+            "sendMessage", {"chat_id": chat_id, "text": text}
+        )
+
+    async def send_one_image(self, chat_id: str, caption: str, photo: bytes):
+        return await self.__send_one(
+            "sendPhoto",
+            {
+                "chat_id": chat_id,
+                "caption": caption,
+                "photo": photo,
+            },
+        )
+
+    async def send_one_video(self, chat_id: str, caption: str, video: bytes):
+        return await self.__send_one(
+            "sendVideo",
+            {
+                "chat_id": chat_id,
+                "caption": caption,
+                "video": video,
+            },
+        )
+
+    async def send_many_messages(self, chat_ids: list[str], texts: list[str]):
+        return await self.__send_many(
+            "sendMessage",
+            [
+                {"chat_id": chat_id, "text": text}
+                for chat_id, text in zip(chat_ids, texts)
+            ],
+        )
+
+    async def send_many_images(
+        self,
+        chat_ids: list[str],
+        captions: list[str],
+        photos: list[bytes],
+    ):
+        return await self.__send_many(
+            "sendPhoto",
+            [
+                {
+                    "chat_id": chat_id,
+                    "caption": caption,
+                    "photo": photo,
+                }
+                for chat_id, caption, photo in zip(chat_ids, captions, photos)
+            ],
+        )
+
+    async def send_many_videos(
+        self,
+        chat_ids: list[str],
+        captions: list[str],
+        videos: list[bytes],
+    ):
+        return await self.__send_many(
+            "sendVideo",
+            [
+                {
+                    "chat_id": chat_id,
+                    "caption": caption,
+                    "video": video,
+                }
+                for chat_id, caption, video in zip(chat_ids, captions, videos)
+            ],
+        )
 
 
 class EmailAlert:
