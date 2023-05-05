@@ -19,5 +19,6 @@ exclude = ".git,__pycache__,venv"
 include = ["src/**/*"]
 strict = true
 useLibraryCodeForTypes = true
-reportMissingTypeStubs = false
+reportMissingTypeStubs = true
 reportGeneralTypeIssues = true
+useAnnotationFromTyping = true
