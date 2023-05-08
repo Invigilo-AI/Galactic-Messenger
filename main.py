@@ -26,12 +26,12 @@ class MessagePayload(TypedDict):
 
 
 class ImagePayload(TypedDict):
-    message: str
+    caption: str
     image_bytes: bytes
 
 
 class VideoPayload(TypedDict):
-    message: str
+    caption: str
     video_bytes: bytes
 
 
@@ -39,11 +39,11 @@ class Alert:
     def __init__(self, service: ServiceInput, token: str) -> None:
         self.client: Union[WhatsappAlert, TelegramAlert, EmailAlert]
 
-        if service == Service.WHATSAPP:
+        if service == Service.WHATSAPP.value:
             self.client = WhatsappAlert(token)
-        elif service == Service.TELEGRAM:
+        elif service == Service.TELEGRAM.value:
             self.client = TelegramAlert(token)
-        elif service == Service.EMAIL:
+        elif service == Service.EMAIL.value:
             self.client = EmailAlert(token)
         else:
             raise Exception("Input Service is Invalid!")
@@ -59,7 +59,7 @@ class Alert:
         if isinstance(self.client, WhatsappAlert):
             return await self.client.send_one_image(
                 to,
-                payload["message"],
+                payload["caption"],
                 self.__bytes_2_base64_str(payload["image_bytes"]),
             )
 
@@ -67,7 +67,7 @@ class Alert:
         if isinstance(self.client, WhatsappAlert):
             return await self.client.send_one_video(
                 to,
-                payload["message"],
+                payload["caption"],
                 self.__bytes_2_base64_str(payload["video_bytes"]),
             )
 
@@ -77,15 +77,15 @@ class WhatsappMessagePayload(TypedDict):
     message: str
 
 
-class WhatsappImagePayload(MessagePayload):
+class WhatsappImagePayload(TypedDict):
     groupId: str
-    message: str
+    caption: str
     imageBase64: str
 
 
-class WhatsappVideoPayload(MessagePayload):
+class WhatsappVideoPayload(TypedDict):
     groupId: str
-    message: str
+    caption: str
     videoBase64: str
 
 
@@ -96,7 +96,7 @@ AllowedWhatsappPayload = Union[
 
 class WhatsappAlert:
     def __init__(self, ip: str):
-        self.url = f"http://{ip}:5000/sendWhatsapp"
+        self.url = f"http://{ip}:3000/sendWhatsapp"
 
     async def __send(
         self,
@@ -146,26 +146,26 @@ class WhatsappAlert:
         )
 
     async def send_one_image(
-        self, groupId: str, message: str, image_base64: str
+        self, groupId: str, caption: str, image_base64: str
     ):
         return await self.__send_one(
             "IMAGE",
             {
                 "groupId": groupId,
-                "message": message,
+                "caption": caption,
                 "imageBase64": image_base64,
             },
         )
 
     async def send_one_video(
-        self, groupId: str, message: str, image_base64: str
+        self, groupId: str, caption: str, video_base64: str
     ):
         return await self.__send_one(
             "VIDEO",
             {
                 "groupId": groupId,
-                "message": message,
-                "imageBase64": image_base64,
+                "caption": caption,
+                "videoBase64": video_base64,
             },
         )
 
@@ -183,7 +183,7 @@ class WhatsappAlert:
     async def send_many_images(
         self,
         groupIds: list[str],
-        messages: list[str],
+        captions: list[str],
         images_base64: list[str],
     ):
         return await self.__send_many(
@@ -191,11 +191,11 @@ class WhatsappAlert:
             [
                 {
                     "groupId": groupId,
-                    "message": message,
+                    "caption": caption,
                     "imageBase64": image_base64,
                 }
-                for groupId, message, image_base64 in zip(
-                    groupIds, messages, images_base64
+                for groupId, caption, image_base64 in zip(
+                    groupIds, captions, images_base64
                 )
             ],
         )
@@ -203,7 +203,7 @@ class WhatsappAlert:
     async def send_many_videos(
         self,
         groupIds: list[str],
-        messages: list[str],
+        captions: list[str],
         videos_base64: list[str],
     ):
         return await self.__send_many(
@@ -211,11 +211,11 @@ class WhatsappAlert:
             [
                 {
                     "groupId": groupId,
-                    "message": message,
+                    "caption": caption,
                     "videoBase64": video_base64,
                 }
-                for groupId, message, video_base64 in zip(
-                    groupIds, messages, videos_base64
+                for groupId, caption, video_base64 in zip(
+                    groupIds, captions, videos_base64
                 )
             ],
         )
@@ -373,14 +373,3 @@ class EmailAlert:
 
     def send_one_video(self, message: str, video_bytes: bytes):
         return
-
-
-if __name__ == "__main__":
-
-    async def main():
-        wa_alert = Alert("WHATSAPP", "tokenabc")
-        await wa_alert.send_one_image(
-            "groupA", {"message": "hi", "image_bytes": b"zxc"}
-        )
-
-    result = main()
