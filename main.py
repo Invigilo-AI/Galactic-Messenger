@@ -54,6 +54,8 @@ class Alert:
     async def send_one_message(self, to: str, payload: MessagePayload):
         if isinstance(self.client, WhatsappAlert):
             return await self.client.send_one_message(to, payload["message"])
+        if isinstance(self.client, TelegramAlert):
+            return await self.client.send_one_message(to, payload["message"])
 
     async def send_one_image(self, to: str, payload: ImagePayload):
         if isinstance(self.client, WhatsappAlert):
@@ -62,6 +64,10 @@ class Alert:
                 payload["caption"],
                 self.__bytes_2_base64_str(payload["image_bytes"]),
             )
+        if isinstance(self.client, TelegramAlert):
+            return await self.client.send_one_image(
+                to, payload["caption"], payload["image_bytes"]
+            )
 
     async def send_one_video(self, to: str, payload: VideoPayload):
         if isinstance(self.client, WhatsappAlert):
@@ -69,6 +75,10 @@ class Alert:
                 to,
                 payload["caption"],
                 self.__bytes_2_base64_str(payload["video_bytes"]),
+            )
+        if isinstance(self.client, TelegramAlert):
+            return await self.client.send_one_video(
+                to, payload["caption"], payload["video_bytes"]
             )
 
 
@@ -247,6 +257,11 @@ class TelegramAlert:
     def __init__(self, token: str):
         self.url = f"https://api.telegram.org/bot{token}"
 
+    def __create_form_data(self, payload: AllowedTelegramPayload):
+        data = aiohttp.FormData()
+        data.add_fields(*payload.items())
+        return data
+
     async def __send(
         self,
         session: aiohttp.ClientSession,
@@ -255,9 +270,9 @@ class TelegramAlert:
     ):
         response = await session.post(
             f"{self.url}/{payload_type}",
-            data=aiohttp.FormData().add_fields(payload),
+            data=self.__create_form_data(payload),
         )
-        return await response.json()
+        return await response.read()
 
     async def __send_one(
         self,
