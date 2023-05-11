@@ -1,11 +1,7 @@
 import smtplib
-from typing import NamedTuple
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
-Config = NamedTuple("Config", [("SMTP_SERVER", str), ("SMTP_PORT", int)])(
-    "smtp.zoho.com", 587
-)
+from config import Config
 
 
 def _create_server_connection(
@@ -48,7 +44,3 @@ def set_email(mail: str, password: str):
         return success
 
     return send_email
-
-
-send_email = set_email("anonone@zohomail.com", "anon13579")
-send_email("mail2anonone@gmail.com", "hello", "hi, this is my first email")
