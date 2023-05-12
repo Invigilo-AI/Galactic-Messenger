@@ -11,4 +11,15 @@ def test_send_email():
     server.send_message.return_value = None
 
     send_email = set_email("example@invigilo.sg", "example_password")
-    assert send_email("example@gmail.com", "example", "example body") is True
+    assert (
+        send_email(
+            {
+                "to": "example@gmail.com",
+                "subject": "example subject",
+                "message": "example message",
+                "attachment_name": "file",
+                "attachment": open("tests/data/SampleImage.jpg", "rb").read(),
+            }
+        )
+        is True
+    )
