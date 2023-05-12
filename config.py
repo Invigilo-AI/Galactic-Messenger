@@ -6,7 +6,7 @@ Config = NamedTuple(
         ("SMTP_SERVER", str),
         ("SMTP_PORT", int),
         ("SINGLE_CONNECT_TIMEOUT", int),
-        ("BATCH_CONNECTION_TIMEOUT", int),
+        ("BATCH_CONNECT_TIMEOUT", int),
         ("SINGLE_TOTAL_TIMEOUT", int),
         ("BATCH_TOTAL_TIMEOUT", int),
     ],
