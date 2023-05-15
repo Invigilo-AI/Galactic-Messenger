@@ -10,9 +10,10 @@ def test_send_email_plain():
     send_email = set_email(env.TEST_EMAIL, env.TEST_PASSWORD)
     assert (
         send_email(
-            env.TEST_DESTINATION_EMAIL,
-            "Unit Test Run Successful - Great Job!",
-            """
+            {
+                "to": env.TEST_DESTINATION_EMAIL,
+                "subject": "Unit Test Run Successful - Great Job!",
+                "message": """
 Dear Fellow Software Engineer,
 
 I hope this email finds you well. I am pleased to inform you that the unit tests for Alert Service ran successfully! Congratulations to you and the entire team on this achievement.
@@ -34,7 +35,8 @@ Best regards,
 Akrit Woranithiphong
 Your Fellow Software Engineer
 Invigilo AI Safety Video Analytics
-        """,
+                """,
+            }
         )
         is True
     )
@@ -44,9 +46,10 @@ def test_send_email_attachment():
     send_email = set_email(env.TEST_EMAIL, env.TEST_PASSWORD)
     assert (
         send_email(
-            env.TEST_DESTINATION_EMAIL,
-            "Subject: Celebrating Our Unit Test Success! 🎉",
-            """
+            {
+                "to": env.TEST_DESTINATION_EMAIL,
+                "subject": "Celebrating Our Unit Test Success! 🎉",
+                "message": """
 Dear Fellow Software Engineer,
 
 I hope this email finds you in high spirits. I am thrilled to announce that our unit tests for the Alert Service have run successfully, marking a significant milestone for our team. As we celebrate this achievement, I wanted to take a moment to express my gratitude and appreciation for your exceptional work.
@@ -71,6 +74,9 @@ Akrit Woranithiphong
 Your Fellow Software Engineer
 Invigilo AI Safety Video Analytics
         """,
+                "attachment_name": "segual.png",
+                "attachment": open("tests/data/SampleImage.jpg", "rb").read(),
+            }
         )
         is True
     )
