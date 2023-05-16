@@ -1,4 +1,6 @@
-from utils import compose
+from typing import TypedDict
+
+from utils import compose, is_schema
 
 
 def test_compose():
@@ -11,3 +13,19 @@ def test_compose():
     add_7_and_mul_13 = compose(add_7, mul_13)
 
     assert add_7_and_mul_13(9) is add_7(mul_13(9))
+
+
+def test_is_schema():
+    class X(TypedDict):
+        x: str
+
+    x = {"x": "xyz"}
+
+    assert is_schema(x, X) is True
+
+    class Y(TypedDict):
+        y: str
+
+    x = {"z": "xyz"}
+
+    assert is_schema(x, Y) is False
