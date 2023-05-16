@@ -39,19 +39,19 @@ AllowedWhatsappPayload = Union[
 
 
 class WhatsappMessageInput(TypedDict):
-    groupId: str
-    message: str
+    chatId: str
+    text: str
 
 
 class WhatsappImageInput(TypedDict):
-    groupId: str
-    caption: str
+    chatId: str
+    text: str
     imageBytes: bytes
 
 
 class WhatsappVideoInput(TypedDict):
-    groupId: str
-    caption: str
+    chatId: str
+    text: str
     videoBytes: bytes
 
 
@@ -188,25 +188,25 @@ def _bytes_to_base64(b: bytes) -> str:
 def _parse_single_input_to_payload(
     input_dict: SingleWhatsappInput,
 ) -> AllowedSingleWhatsappPayload:
-    if is_schema(input_dict, WhatsappMessageInput):
-        wa_mi = cast(WhatsappMessageInput, input_dict)
-        return {
-            "groupId": wa_mi["groupId"],
-            "message": wa_mi["message"],
-        }
-    elif is_schema(input_dict, WhatsappImageInput):
+    if is_schema(input_dict, WhatsappImageInput):
         wa_ii = cast(WhatsappImageInput, input_dict)
         return {
-            "groupId": wa_ii["groupId"],
+            "groupId": wa_ii["chatId"],
             "imageBase64": _bytes_to_base64(wa_ii["imageBytes"]),
-            "caption": wa_ii["caption"],
+            "caption": wa_ii["text"],
         }
     elif is_schema(input_dict, WhatsappVideoInput):
         wa_ii = cast(WhatsappVideoInput, input_dict)
         return {
-            "groupId": wa_ii["groupId"],
+            "groupId": wa_ii["chatId"],
             "videoBase64": _bytes_to_base64(wa_ii["videoBytes"]),
-            "caption": wa_ii["caption"],
+            "caption": wa_ii["text"],
+        }
+    elif is_schema(input_dict, WhatsappMessageInput):
+        wa_mi = cast(WhatsappMessageInput, input_dict)
+        return {
+            "groupId": wa_mi["chatId"],
+            "message": wa_mi["text"],
         }
     else:
         raise ValueError("Input Schema is Invalid")

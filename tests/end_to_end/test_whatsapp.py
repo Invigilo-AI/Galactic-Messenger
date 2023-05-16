@@ -8,7 +8,7 @@ from whatsapp import setup_whatsapp
 async def test_send_whatsapp_message():
     send_whatsapp = setup_whatsapp(env.TEST_WHATSAPP_IP)
     res = await send_whatsapp(
-        {"groupId": env.TEST_WHATSAPP_GROUP_ID, "message": "Hello World!"}
+        {"chatId": env.TEST_WHATSAPP_GROUP_ID, "text": "Hello World!"}
     )
     assert res
 
@@ -18,9 +18,9 @@ async def test_send_whatsapp_image():
     send_whatsapp = setup_whatsapp(env.TEST_WHATSAPP_IP)
     res = await send_whatsapp(
         {
-            "groupId": env.TEST_WHATSAPP_GROUP_ID,
+            "chatId": env.TEST_WHATSAPP_GROUP_ID,
             "imageBytes": open("tests/data/SampleImage.jpg", "rb").read(),
-            "caption": "Hello World!",
+            "text": "Hello World!",
         }
     )
     assert res
@@ -31,9 +31,9 @@ async def test_send_whatsapp_video():
     send_whatsapp = setup_whatsapp(env.TEST_WHATSAPP_IP)
     res = await send_whatsapp(
         {
-            "groupId": env.TEST_WHATSAPP_GROUP_ID,
+            "chatId": env.TEST_WHATSAPP_GROUP_ID,
             "videoBytes": open("tests/data/SampleVideo.mp4", "rb").read(),
-            "caption": "Hello World!",
+            "text": "Hello World!",
         }
     )
     assert res
@@ -45,22 +45,22 @@ async def test_send_whatsapp_batch_mixed():
     res = await send_whatsapp(
         [
             {
-                "groupId": env.TEST_WHATSAPP_GROUP_ID,
-                "message": "Yoooo",
+                "chatId": env.TEST_WHATSAPP_GROUP_ID,
+                "text": "Yoooo",
             },
             {
-                "groupId": env.TEST_WHATSAPP_GROUP_ID,
+                "chatId": env.TEST_WHATSAPP_GROUP_ID,
                 "videoBytes": open("tests/data/SampleVideo.mp4", "rb").read(),
-                "caption": "!!!!",
+                "text": "!!!!",
             },
             {
-                "groupId": env.TEST_WHATSAPP_GROUP_ID,
+                "chatId": env.TEST_WHATSAPP_GROUP_ID,
                 "imageBytes": open("tests/data/SampleImage.jpg", "rb").read(),
-                "caption": "Hello World!",
+                "text": "Hello World!",
             },
             {
-                "groupId": env.TEST_WHATSAPP_GROUP_ID,
-                "message": "🎉 Congratulations on passing the WhatsApp messaging test with flying colors! 🚀 Your skills are on fire, and your code is sending messages, photos, videos, and even mixed batches flawlessly! 😄 Keep up the amazing work, and keep spreading smiles with your fantastic creations! 💪🌟",
+                "chatId": env.TEST_WHATSAPP_GROUP_ID,
+                "text": "🎉 Congratulations on passing the WhatsApp messaging test with flying colors! 🚀 Your skills are on fire, and your code is sending messages, photos, videos, and even mixed batches flawlessly! 😄 Keep up the amazing work, and keep spreading smiles with your fantastic creations! 💪🌟",
             },
         ]
     )
