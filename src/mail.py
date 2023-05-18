@@ -8,6 +8,20 @@ from typing import Callable, TypedDict, Union, cast
 from config import Config
 
 
+class SMTPUrl(TypedDict):
+    zoho: str
+    gmail: str
+
+
+class SMTPPort(TypedDict):
+    gmail: int
+    zoho: int
+
+
+smtp_url: SMTPUrl = {"zoho": "smtp.zoho.com", "gmail": "smtp.gmail.com"}
+smtp_port: SMTPPort = {"zoho": 587, "gmail": 587}
+
+
 class PlainEmailContent(TypedDict):
     to: str
     subject: str
@@ -65,12 +79,8 @@ def _create_email_with_attachment_body(
 
 
 def _send(server: smtplib.SMTP, body: MIMEMultipart) -> bool:
-    server.send_message(body)
-    return True
-
-
-def _close_server_connection(server: smtplib.SMTP) -> None:
-    server.quit()
+    with server:
+        return True if server.send_message(body) else False
 
 
 def _create_email_body(
@@ -99,12 +109,14 @@ def _create_email_body(
 def setup_email(mail: str, password: str) -> Callable[[EmailContent], bool]:
     def send_email(email_content: EmailContent) -> bool:
         server = _create_server_connection(
-            Config.SMTP_SERVER, Config.SMTP_PORT, mail, password
+            smtp_url[Config.SMTP_SERVER.lower()],
+            smtp_port[Config.SMTP_SERVER.lower()],
+            mail,
+            password,
         )
         email_body = _create_email_body(mail, email_content)
 
         success = _send(server, email_body)
-        _close_server_connection(server)
         return success
 
     return send_email
