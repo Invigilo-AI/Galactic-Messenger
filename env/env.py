@@ -14,4 +14,4 @@ class Env(BaseSettings):
         case_sensitive = True
 
 
-env = Env(_env_file=".env")  # type: ignore
+env = Env(_env_file="env/.env")  # type: ignore

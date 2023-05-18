@@ -1,7 +1,7 @@
 import pytest
 
-from env import env
-from whatsapp import setup_whatsapp
+from env.env import env
+from src.whatsapp import setup_whatsapp
 
 
 @pytest.mark.asyncio

@@ -4,7 +4,7 @@ from typing import List, Literal, TypedDict, Union, cast
 import aiohttp
 
 from config import Config
-from utils import compose, is_schema
+from src.utils import compose, is_schema
 
 
 class TelegramMessagePayload(TypedDict):

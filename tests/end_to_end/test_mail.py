@@ -1,7 +1,7 @@
 import pytest
 
-from env import env
-from mail import setup_email
+from env.env import env
+from src.mail import setup_email
 
 
 @pytest.mark.asyncio

@@ -45,7 +45,6 @@ async def _create_server_connection(
 ) -> aiosmtplib.SMTP:
     server = aiosmtplib.SMTP(url, port)
     await server.connect()
-    await server.starttls()
     await server.login(mail, password)
     return server
 
@@ -82,7 +81,7 @@ def _create_email_with_attachment_body(
 
 async def _send(server: aiosmtplib.SMTP, body: MIMEMultipart) -> bool:
     async with server:
-        return True if server.send_message(body) else False
+        return True if await server.send_message(body) else False
 
 
 def _create_email_body(

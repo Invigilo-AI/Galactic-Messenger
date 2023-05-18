@@ -1,7 +1,7 @@
 import pytest
 
-from env import env
-from telegram import setup_telegram
+from env.env import env
+from src.telegram import setup_telegram
 
 
 @pytest.mark.asyncio
