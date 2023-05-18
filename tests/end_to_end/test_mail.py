@@ -1,13 +1,9 @@
 from env import env
-
-
-from mail import (
-    set_email,
-)
+from mail import setup_email
 
 
 def test_send_email_plain():
-    send_email = set_email(env.TEST_EMAIL, env.TEST_PASSWORD)
+    send_email = setup_email(env.TEST_EMAIL, env.TEST_PASSWORD)
     assert (
         send_email(
             {

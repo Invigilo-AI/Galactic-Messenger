@@ -1,10 +1,11 @@
 import smtplib
-from config import Config
 from email import encoders
-from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-from typing import cast, TypedDict, Callable, Union
+from email.mime.text import MIMEText
+from typing import Callable, TypedDict, Union, cast
+
+from config import Config
 
 
 class PlainEmailContent(TypedDict):
@@ -95,7 +96,7 @@ def _create_email_body(
         )
 
 
-def set_email(mail: str, password: str) -> Callable[[EmailContent], bool]:
+def setup_email(mail: str, password: str) -> Callable[[EmailContent], bool]:
     def send_email(email_content: EmailContent) -> bool:
         server = _create_server_connection(
             Config.SMTP_SERVER, Config.SMTP_PORT, mail, password

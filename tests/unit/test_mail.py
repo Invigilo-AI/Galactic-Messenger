@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, Mock
 
 from mail import (_close_server_connection, _create_email_body,
                   _create_email_plain_body, _create_email_with_attachment_body,
-                  _create_server_connection, _send, set_email)
+                  _create_server_connection, _send, setup_email)
 
 
 def test_send_email():
@@ -13,7 +13,7 @@ def test_send_email():
     server.login.return_value = None
     server.send_message.return_value = None
 
-    send_email = set_email("example@invigilo.sg", "example_password")
+    send_email = setup_email("example@invigilo.sg", "example_password")
     assert (
         send_email(
             {
