@@ -1,114 +1,130 @@
-# Alert Service 🚀
+# Galactic Messenger 🚀
 
-The **Alert Service** is a Python package that provides a simple lightweight client for sending out messages to **Telegram** 📱, **Whatsapp** 📞, and **Email** 📧. It offers various methods for sending messages, images, and videos to different messaging platforms.
+Galactic Messenger is a versatile and efficient Python package designed for sending messages across multiple platforms. It provides seamless integration with popular communication channels such as email, Telegram, and WhatsApp, offering a streamlined solution for message delivery. Built with asynchronous capabilities, Galactic Messenger supports batch requests and delivers optimal performance. 💬📨📱
 
-## Installation ⚙️
+## Installation
 
-To install the Alert Service package, you can use pip:
+To install Galactic Messenger, simply use pip:
 
 ```shell
-pip install alert-service
+pip install galactic-messenger
 ```
 
-## Usage 📝
+## Usage
 
-### Initialization 🚀
-
-To use the Alert Service, you need to initialize an instance of the `Alert` class with the desired messaging service and a token. The supported messaging services are **Whatsapp**, **Telegram**, and **Email**. The token is a required parameter and represents the authentication token or IP address for the corresponding service.
+Here is an example demonstrating how to use Galactic Messenger to send messages: 📝🚀
 
 ```python
-from alert_service import Alert, Service
+import asyncio
+from galactic_messenger import setup_email
+from galactic_messenger import setup_telegram
+from galactic_messenger import setup_whatsapp
 
-# Initialize the Alert Service with Whatsapp
-whatsapp_alert = Alert(Service.WHATSAPP, "YOUR_WHATSAPP_TOKEN")
+async def send_messages():
+    # Set up email
+    email_sender = setup_email("your_email@example.com", "your_password")
+    email_content = {
+        "to": "recipient@example.com",
+        "subject": "Hello",
+        "message": "This is a test email.",
+    }
+    await email_sender(email_content)
 
-# Initialize the Alert Service with Telegram
-telegram_alert = Alert(Service.TELEGRAM, "YOUR_TELEGRAM_TOKEN")
+    # Set up Telegram
+    telegram_sender = setup_telegram("your_telegram_token")
+    telegram_input = {
+        "chatId": "your_chat_id",
+        "text": "Hello from Galactic Messenger!",
+    }
+    await telegram_sender(telegram_input)
 
-# Initialize the Alert Service with Email
-email_alert = Alert(Service.EMAIL, "YOUR_EMAIL_TOKEN")
+    # Set up WhatsApp
+    whatsapp_sender = setup_whatsapp("http://your-whatsapp-api-endpoint")
+    whatsapp_input = {
+        "groupId": "your_group_id",
+        "message": "Hello from Galactic Messenger!",
+    }
+    await whatsapp_sender(whatsapp_input)
+
+asyncio.run(send_messages())
 ```
 
-### Sending Messages ✉️
+## Features
 
-The Alert Service provides methods for sending messages to the selected messaging service.
+### Email ✉️
+
+- Send plain text emails
+- Send emails with attachments
+- Supports popular email services like Zoho Mail and Gmail
+
+### Telegram 📢
+
+- Send text messages to Telegram chats
+- Send images with captions to Telegram chats
+- Send videos with captions to Telegram chats
+
+### WhatsApp 📲
+
+- Send text messages to WhatsApp groups
+- Send images with captions to WhatsApp groups
+- Send videos with captions to WhatsApp groups
+
+### Batch Requests 🚀
+
+Galactic Messenger seamlessly handles batch requests, allowing you to send multiple messages simultaneously. You can provide an array of messages to the sender functions for efficient batch processing.
 
 ```python
-# Send a message
-whatsapp_alert.send_one_message("TO_PHONE_NUMBER", {"message": "Hello, World! 👋"})
+# Sending multiple emails in a batch
+email_content_1 = {
+    "to": "recipient1@example.com",
+    "subject": "Message 1",
+    "message": "This is message 1.",
+}
+email_content_2 = {
+    "to": "recipient2@example.com",
+    "subject": "Message 2",
+    "message": "This is message 2.",
+}
+email_contents = [email_content_1, email_content_2]
+await email_sender(email_contents)
 
-# Send an image
-telegram_alert.send_one_image("TO_CHAT_ID", {"caption": "Image 📷", "image_bytes": b"IMAGE_BYTES"})
+# Sending multiple Telegram messages in a batch
+telegram_input_1 = {
+    "chatId": "chat_id_1",
+    "text": "Message 1",
+}
+telegram_input_2 = {
+    "chatId": "chat_id_2",
+    "text": "Message 2",
+}
+telegram_inputs = [telegram_input_1, telegram_input_2]
+await telegram_sender(telegram_inputs)
 
-# Send a video
-email_alert.send_one_video("TO_EMAIL_ADDRESS", {"caption": "Video 🎥", "video_bytes": b"VIDEO_BYTES"})
+# Sending multiple WhatsApp messages in a batch
+whatsapp_input_1 = {
+    "chatId": "group_id_1",
+    "message": "Message 1",
+}
+whatsapp_input_2 = {
+    "chatId": "group_id_2",
+    "message": "Message 2",
+}
+whatsapp_inputs = [whatsapp_input_1, whatsapp_input_2]
+await whatsapp_sender(whatsapp_inputs)
 ```
 
-### Customization and Extensibility 🎨
+## Configuration
 
-The Alert Service is designed to be extensible and customizable. You can add support for additional messaging services by creating new classes that implement the required methods and interfaces. The `Alert` class acts as a mediator between the messaging service clients and provides a unified interface for sending messages.
+You
 
-## Configuration ⚙️
+can customize the behavior of Galactic Messenger by setting the following environment variables:
 
-The Alert Service allows you to configure various timeouts for connecting and sending requests. The default timeout values are as follows:
+- 📫 **EMAIL_SERVICE**: The email service provider. Choose "zoho" or "gmail". Default: "zoho".
+- ⏳ **BATCH_TOTAL_TIMEOUT**: Total timeout in seconds for batch requests. Default: 30.
+- ⏰ **BATCH_CONNECT_TIMEOUT**: Connection timeout in seconds for batch requests. Default: 5.
+- ⏳ **SINGLE_TOTAL_TIMEOUT**: Total timeout in seconds for single requests. Default: 10.
+- ⏰ **SINGLE_CONNECT_TIMEOUT**: Connection timeout in seconds for single requests. Default: 2.
 
-- Single Connect Timeout: 5 seconds ⏱️
-- Batch Connect Timeout: 5 seconds ⏱️
-- Single Total Timeout: 10 seconds ⏱️
-- Batch Total Timeout: 60 seconds ⏱️
+## Contributing
 
-If you need to customize these timeouts, you can modify the `Config` enum values accordingly.
-
-## Examples 🌟
-
-Here are some examples demonstrating the usage of the Alert Service:
-
-```python
-from alert_service import Alert, Service
-
-# Initialize the Alert Service with Whatsapp
-whatsapp_alert = Alert(Service.WHATSAPP, "YOUR_WHATSAPP_TOKEN")
-
-# Send a message
-whatsapp_alert.send_one_message("TO_PHONE_NUMBER", {"message": "Hello, World! 👋"})
-
-# Send an image
-whatsapp_alert.send_one_image("TO_PHONE_NUMBER", {"caption": "Image 📷", "image_bytes": b"IMAGE_BYTES"})
-
-# Send a video
-whatsapp_alert.send_one_video("TO_PHONE_NUMBER", {"caption": "Video 🎥", "video_bytes": b"VIDEO_BYTES"})
-
-
-# Initialize the Alert Service with Telegram
-telegram_alert = Alert(Service.TELEGRAM, "YOUR_TELEGRAM_TOKEN")
-
-# Send a message
-telegram_alert.send_one_message("TO_CHAT_ID", {"message": "Hello, World! 👋"})
-
-# Send an image
-telegram_alert.send_one_image("TO_CHAT_ID", {"caption": "Image 📷", "image_bytes": b"IMAGE_BYTES"})
-
-# Send a video
-telegram_alert.send_one_video("TO_CHAT_ID", {"caption": "Video 🎥", "video_bytes": b"VIDEO_BYTES"})
-
-
-# Initialize the Alert Service with Email
-email_alert = Alert(Service.EMAIL, "YOUR_EMAIL_TOKEN")
-
-# Send a message
-email_alert.send_one_message("TO_EMAIL_ADDRESS", {"message": "Hello, World! 👋"})
-
-# Send an image
-email_alert.send_one_image("TO_EMAIL_ADDRESS", {"caption": "Image 📷", "image_bytes": b"IMAGE_BYTES"})
-
-# Send a video
-email_alert.send_one_video("TO_EMAIL_ADDRESS", {"caption": "Video 🎥", "video_bytes": b"VIDEO_BYTES"})
-```
-
-## Conclusion 🎉
-
-The Alert Service provides a convenient and efficient way to send messages, images, and videos to popular messaging platforms such as Whatsapp, Telegram, and Email. With its simple interface and extensibility, you can easily integrate it into your projects and enhance your notification capabilities.
-
-Give it a try and start alerting your users and stakeholders with ease! If you encounter any issues or have suggestions for improvement, feel free to reach out to the Alert Service community or open an issue on the project repository.
-
-Happy alerting! 🚀✉️📷🎥📧
+Contributions to Galactic Messenger are welcome! If you find a bug, have a suggestion, or want to contribute code, please open an issue or submit a pull request on the [GitHub repository](https://github.com/your-username/galactic-messenger).
