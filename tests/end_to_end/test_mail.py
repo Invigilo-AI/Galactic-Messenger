@@ -1,11 +1,14 @@
+import pytest
+
 from env import env
 from mail import setup_email
 
 
-def test_send_email_plain():
+@pytest.mark.asyncio
+async def test_send_email_plain():
     send_email = setup_email(env.TEST_MAIL_EMAIL, env.TEST_MAIL_PASSWORD)
     assert (
-        send_email(
+        await send_email(
             {
                 "to": env.TEST_MAIL_DESTINATION_EMAIL,
                 "subject": "Unit Test Run Successful - Great Job!",
@@ -38,10 +41,11 @@ Invigilo AI Safety Video Analytics
     )
 
 
-def test_send_email_attachment():
+@pytest.mark.asyncio
+async def test_send_email_attachment():
     send_email = setup_email(env.TEST_MAIL_EMAIL, env.TEST_MAIL_PASSWORD)
     assert (
-        send_email(
+        await send_email(
             {
                 "to": env.TEST_MAIL_DESTINATION_EMAIL,
                 "subject": "Celebrating Our Unit Test Success! 🎉",

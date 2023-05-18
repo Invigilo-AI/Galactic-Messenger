@@ -1,9 +1,10 @@
-import smtplib
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import Callable, TypedDict, Union, cast
+from typing import TypedDict, Union, cast
+
+import aiosmtplib
 
 from config import Config
 
@@ -39,12 +40,13 @@ class WithAttachmentEmailContent(TypedDict):
 EmailContent = Union[PlainEmailContent, WithAttachmentEmailContent]
 
 
-def _create_server_connection(
+async def _create_server_connection(
     url: str, port: int, mail: str, password: str
-) -> smtplib.SMTP:
-    server = smtplib.SMTP(url, port)
-    server.starttls()
-    server.login(mail, password)
+) -> aiosmtplib.SMTP:
+    server = aiosmtplib.SMTP(url, port)
+    await server.connect()
+    await server.starttls()
+    await server.login(mail, password)
     return server
 
 
@@ -78,8 +80,8 @@ def _create_email_with_attachment_body(
     return email_body
 
 
-def _send(server: smtplib.SMTP, body: MIMEMultipart) -> bool:
-    with server:
+async def _send(server: aiosmtplib.SMTP, body: MIMEMultipart) -> bool:
+    async with server:
         return True if server.send_message(body) else False
 
 
@@ -106,9 +108,9 @@ def _create_email_body(
         )
 
 
-def setup_email(mail: str, password: str) -> Callable[[EmailContent], bool]:
-    def send_email(email_content: EmailContent) -> bool:
-        server = _create_server_connection(
+def setup_email(mail: str, password: str):
+    async def send_email(email_content: EmailContent) -> bool:
+        server = await _create_server_connection(
             smtp_url[Config.SMTP_SERVER.lower()],
             smtp_port[Config.SMTP_SERVER.lower()],
             mail,
@@ -116,7 +118,7 @@ def setup_email(mail: str, password: str) -> Callable[[EmailContent], bool]:
         )
         email_body = _create_email_body(mail, email_content)
 
-        success = _send(server, email_body)
+        success = await _send(server, email_body)
         return success
 
     return send_email
