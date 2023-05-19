@@ -115,9 +115,7 @@ await whatsapp_sender(whatsapp_inputs)
 
 ## Configuration
 
-You
-
-can customize the behavior of Galactic Messenger by setting the following environment variables:
+You can customize the behavior of Galactic Messenger by setting the following environment variables:
 
 - 📫 **EMAIL_SERVICE**: The email service provider. Choose "zoho" or "gmail". Default: "zoho".
 - ⏳ **BATCH_TOTAL_TIMEOUT**: Total timeout in seconds for batch requests. Default: 30.

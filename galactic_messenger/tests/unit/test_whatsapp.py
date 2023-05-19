@@ -4,14 +4,15 @@ from unittest.mock import AsyncMock
 import pytest
 from aiohttp import ClientSession
 
-from whatsapp import (_bytes_to_base64, _get_payload_type, _get_timeout_option,
-                      _get_type_and_send_and_parse_to_json,
-                      _handle_create_session, _handle_parse_input_to_payload,
-                      _handle_send, _is_batch,
-                      _parse_multiple_input_to_payload,
-                      _parse_single_input_to_payload, _send,
-                      _send_and_parse_to_json, _send_multiple, _send_single,
-                      _to_json, setup_whatsapp)
+from ...src.whatsapp import (_bytes_to_base64, _get_payload_type,
+                             _get_timeout_option,
+                             _get_type_and_send_and_parse_to_json,
+                             _handle_create_session,
+                             _handle_parse_input_to_payload, _handle_send,
+                             _is_batch, _parse_multiple_input_to_payload,
+                             _parse_single_input_to_payload, _send,
+                             _send_and_parse_to_json, _send_multiple,
+                             _send_single, _to_json, setup_whatsapp)
 
 
 @pytest.mark.asyncio
@@ -60,14 +61,14 @@ async def test_to_json():
 @pytest.mark.asyncio
 async def test_send():
     class PayloadMessage(TypedDict):
-        chatId: str
-        text: str
+        groupId: str
+        message: str
 
     ip = "example.com"
     session = AsyncMock()
     payload_type = "MESSAGE"
 
-    payload: PayloadMessage = {"chatId": "chatId", "text": "Hello"}
+    payload: PayloadMessage = {"groupId": "chatId", "message": "Hello"}
 
     response = AsyncMock()
     session.post = AsyncMock(return_value=response)
@@ -81,14 +82,14 @@ async def test_send():
 @pytest.mark.asyncio
 async def test_send_and_parse_to_json():
     class PayloadMessage(TypedDict):
-        chatId: str
+        groupId: str
         message: str
 
     ip = "example.com"
     session = AsyncMock()
     payload_type = "MESSAGE"
 
-    payload: PayloadMessage = {"chatId": "chatId", "message": "Hello"}
+    payload: PayloadMessage = {"groupId": "groupId", "message": "Hello"}
 
     response = AsyncMock()
     response.json = AsyncMock(return_value="json_response")

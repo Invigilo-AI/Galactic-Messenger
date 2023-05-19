@@ -1,9 +1,9 @@
 import smtplib
 from unittest.mock import MagicMock, Mock
 
-from mail import (_close_server_connection, _create_email_body,
-                  _create_email_plain_body, _create_email_with_attachment_body,
-                  _create_server_connection, _send, setup_email)
+from ...src.mail import (_create_email_body, _create_email_plain_body,
+                         _create_email_with_attachment_body,
+                         _create_server_connection, _send, setup_email)
 
 
 def test_send_email():
@@ -89,14 +89,6 @@ def test_send():
 
     assert _send(server, body)
     server.send_message.assert_called_once_with(body)
-
-
-def test_close_server_connection():
-    server = Mock()
-
-    _close_server_connection(server)
-
-    server.quit.assert_called_once()
 
 
 def test_create_email_body():

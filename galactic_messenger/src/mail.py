@@ -6,7 +6,7 @@ from typing import TypedDict, Union, cast
 
 import aiosmtplib
 
-from config import Config
+from ..config import Config
 
 
 class SMTPUrl(TypedDict):
