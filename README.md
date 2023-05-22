@@ -23,28 +23,25 @@ from galactic_messenger import setup_whatsapp
 async def send_messages():
     # Set up email
     email_sender = setup_email("your_email@example.com", "your_password")
-    email_content = {
+    await email_sender({
         "to": "recipient@example.com",
         "subject": "Hello",
         "message": "This is a test email.",
-    }
-    await email_sender(email_content)
+    })
 
     # Set up Telegram
     telegram_sender = setup_telegram("your_telegram_token")
-    telegram_input = {
+    await telegram_sender({
         "chatId": "your_chat_id",
         "text": "Hello from Galactic Messenger!",
-    }
-    await telegram_sender(telegram_input)
+    })
 
     # Set up WhatsApp
     whatsapp_sender = setup_whatsapp("http://your-whatsapp-api-endpoint")
-    whatsapp_input = {
-        "groupId": "your_group_id",
-        "message": "Hello from Galactic Messenger!",
-    }
-    await whatsapp_sender(whatsapp_input)
+    await whatsapp_sender({
+        "chatId": "your_group_id",
+        "text": "Hello from Galactic Messenger!",
+    })
 
 asyncio.run(send_messages())
 ```
@@ -74,43 +71,48 @@ asyncio.run(send_messages())
 Galactic Messenger seamlessly handles batch requests, allowing you to send multiple messages simultaneously. You can provide an array of messages to the sender functions for efficient batch processing.
 
 ```python
-# Sending multiple emails in a batch
-email_content_1 = {
-    "to": "recipient1@example.com",
-    "subject": "Message 1",
-    "message": "This is message 1.",
-}
-email_content_2 = {
-    "to": "recipient2@example.com",
-    "subject": "Message 2",
-    "message": "This is message 2.",
-}
-email_contents = [email_content_1, email_content_2]
-await email_sender(email_contents)
+async def main():
+    # Sending multiple Telegram messages in a batch
+    telegram_sender = setup_telegram("your_telegram_token")
+    await telegram_sender(
+        [
+            {
+                "chatId": "chat_id_1",
+                "text": "Message 1",
+            },
+            {
+                "chatId": "chat_id_2",
+                "text": "Message 2",
+                "imageBytes": open("./image.png", "rb").read(),
+            },
+            {
+                "chatId": "chat_id_3",
+                "text": "Message 3",
+                "videoBytes": open("./video.png", "rb").read(),
+            },
+        ]
+    )
 
-# Sending multiple Telegram messages in a batch
-telegram_input_1 = {
-    "chatId": "chat_id_1",
-    "text": "Message 1",
-}
-telegram_input_2 = {
-    "chatId": "chat_id_2",
-    "text": "Message 2",
-}
-telegram_inputs = [telegram_input_1, telegram_input_2]
-await telegram_sender(telegram_inputs)
-
-# Sending multiple WhatsApp messages in a batch
-whatsapp_input_1 = {
-    "chatId": "group_id_1",
-    "message": "Message 1",
-}
-whatsapp_input_2 = {
-    "chatId": "group_id_2",
-    "message": "Message 2",
-}
-whatsapp_inputs = [whatsapp_input_1, whatsapp_input_2]
-await whatsapp_sender(whatsapp_inputs)
+    # Sending multiple WhatsApp messages in a batch
+    whatsapp_sender = setup_whatsapp("http://your-whatsapp-api-endpoint")
+    await whatsapp_sender(
+        [
+            {
+                "chatId": "chat_id_1",
+                "text": "Message 1",
+            },
+            {
+                "chatId": "chat_id_2",
+                "text": "Message 2",
+                "imageBytes": open("./image.png", "rb").read(),
+            },
+            {
+                "chatId": "chat_id_3",
+                "text": "Message 3",
+                "videoBytes": open("./video.png", "rb").read(),
+            },
+        ]
+    )
 ```
 
 ## Configuration

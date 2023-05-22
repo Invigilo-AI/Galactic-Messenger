@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="galactic-messenger",
-    version="0.1.4",
+    version="0.1.6",
     author="InvigiloAI",
     author_email="contact@invigilo.ai",
     description="Galactic Messenger is a versatile and efficient Python package designed for sending messages across multiple platforms.",
