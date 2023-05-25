@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from ...src.utils import compose, is_schema
+from galactic_messenger.src.utils import compose, is_schema
 
 
 def test_compose():

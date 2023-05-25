@@ -1,9 +1,11 @@
 import smtplib
 from unittest.mock import MagicMock, Mock
 
-from ...src.mail import (_create_email_body, _create_email_plain_body,
-                         _create_email_with_attachment_body,
-                         _create_server_connection, _send, setup_email)
+from galactic_messenger.src.mail import (_create_email_body,
+                                         _create_email_plain_body,
+                                         _create_email_with_attachment_body,
+                                         _create_server_connection, _send,
+                                         setup_email)
 
 
 def test_send_email():

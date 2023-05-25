@@ -1,7 +1,7 @@
 import pytest
 
-from ...env.env import env
-from ...src.mail import setup_email
+from galactic_messenger.env.env import env
+from galactic_messenger.src.mail import setup_email
 
 
 @pytest.mark.asyncio

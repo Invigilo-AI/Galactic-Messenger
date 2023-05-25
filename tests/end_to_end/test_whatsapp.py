@@ -1,7 +1,7 @@
 import pytest
 
-from ...env.env import env
-from ...src.whatsapp import setup_whatsapp
+from galactic_messenger.env.env import env
+from galactic_messenger.src.whatsapp import setup_whatsapp
 
 
 @pytest.mark.asyncio
